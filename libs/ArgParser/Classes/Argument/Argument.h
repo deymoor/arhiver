@@ -12,6 +12,7 @@ private:
     bool is_multi_value_ = false;
     bool is_positional_ = false;
     bool is_default_ = false;
+    bool is_additional_ = false;
     T default_value_;
     size_t count_min_parameters_ = 0;
     size_t count_parameters_ = 0;
@@ -43,10 +44,7 @@ public:
     }
 
     bool GetIsParameters() const {
-        if (parameters_.empty()) {
-            return false;
-        }
-        return true;
+        return !parameters_.empty();
     }
 
     bool GetIsStoreValue() const {
@@ -69,6 +67,10 @@ public:
 
     bool GetIsPositional() const {
         return is_positional_;
+    }
+
+    bool GetIsAdditional() const {
+        return is_additional_;
     }
 
     bool GetIsDefault() const {
@@ -124,6 +126,11 @@ public:
     Argument<T>& MultiValue(size_t count_min_parameters = 0) {
         is_multi_value_ = true;
         count_min_parameters_ = count_min_parameters;
+        return *this;
+    }
+
+    Argument<T>& AdditionalArgument() {
+        is_additional_ = true;
         return *this;
     }
 

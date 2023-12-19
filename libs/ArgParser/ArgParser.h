@@ -51,7 +51,7 @@ private:
     template<typename T>
     bool CheckCountOfParameters(const std::vector<T>& arguments) {
         for (size_t i = 0; i < arguments.size(); ++i) {
-            if (!arguments[i].GetIsParameters()) {
+            if (!arguments[i].GetIsParameters() && !arguments[i].GetIsAdditional()) {
                 ThrowError("CheckCountOfParameters: You must to write some parameters for argument!\n");
                 return true;
             }

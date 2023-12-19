@@ -177,6 +177,10 @@ std::optional<std::string> ArgumentParser::ArgParser::GetStringValue(std::string
             (pos > 0 && !str_arguments_[i].GetIsMultiValue()) ||
             (pos + 1 > str_arguments_[i].GetCountParameters())) {
 
+            if (str_arguments_[i].GetIsAdditional()) {
+                return std::nullopt;
+            }
+
             if (str_arguments_[i].GetCountParameters() == 0 && pos == 0) {
                 ThrowError("GetStrValue: Please, write at least one parameter");
             } else if (pos > 0 && !str_arguments_[i].GetIsMultiValue()) {
@@ -200,6 +204,10 @@ std::optional<std::string> ArgumentParser::ArgParser::GetStringValue(char short_
         if ((str_arguments_[i].GetCountParameters() == 0 && pos == 0) ||
             (pos > 0 && !str_arguments_[i].GetIsMultiValue()) ||
             (pos + 1 > str_arguments_[i].GetCountParameters())) {
+
+            if (str_arguments_[i].GetIsAdditional()) {
+                return std::nullopt;
+            }
 
             if (str_arguments_[i].GetCountParameters() == 0 && pos == 0) {
                 ThrowError("GetStrValue: Please, write at least one parameter");
@@ -225,6 +233,10 @@ std::optional<int32_t> ArgumentParser::ArgParser::GetIntValue(std::string_view l
             (pos > 0 && !int_arguments_[i].GetIsMultiValue()) ||
             (pos + 1 > int_arguments_[i].GetCountParameters())) {
 
+            if (int_arguments_[i].GetIsAdditional()) {
+                return std::nullopt;
+            }
+
             if (int_arguments_[i].GetCountParameters() == 0 && pos == 0) {
                 ThrowError("GetIntValue: Please, write at least one parameter");
             } else if (pos > 0 && !int_arguments_[i].GetIsMultiValue()) {
@@ -248,6 +260,10 @@ std::optional<int32_t> ArgumentParser::ArgParser::GetIntValue(char short_name, i
         if ((int_arguments_[i].GetCountParameters() == 0 && pos == 0) ||
             (pos > 0 && !int_arguments_[i].GetIsMultiValue()) ||
             (pos + 1 > int_arguments_[i].GetCountParameters())) {
+
+            if (int_arguments_[i].GetIsAdditional()) {
+                return std::nullopt;
+            }
 
             if (int_arguments_[i].GetCountParameters() == 0 && pos == 0) {
                 ThrowError("GetIntValue: Please, write at least one parameter");
@@ -273,6 +289,10 @@ std::optional<bool> ArgumentParser::ArgParser::GetFlag(std::string_view long_nam
             (pos > 0 && !bool_arguments_[i].GetIsMultiValue()) ||
             (pos + 1 > bool_arguments_[i].GetCountParameters())) {
 
+            if (bool_arguments_[i].GetIsAdditional()) {
+                return std::nullopt;
+            }
+
             if (bool_arguments_[i].GetCountParameters() == 0 && pos == 0) {
                 ThrowError("GetFlag: Please, write at least one parameter");
             } else if (pos > 0 && !bool_arguments_[i].GetIsMultiValue()) {
@@ -296,6 +316,10 @@ std::optional<bool> ArgumentParser::ArgParser::GetFlag(char short_name, int32_t 
         if ((bool_arguments_[i].GetCountParameters() == 0 && pos == 0) ||
             (pos > 0 && !bool_arguments_[i].GetIsMultiValue()) ||
             (pos + 1 > bool_arguments_[i].GetCountParameters())) {
+
+            if (bool_arguments_[i].GetIsAdditional()) {
+                return std::nullopt;
+            }
 
             if (bool_arguments_[i].GetCountParameters() == 0 && pos == 0) {
                 ThrowError("GetFlag: Please, write at least one parameter");
