@@ -13,7 +13,7 @@ namespace HammingCode {
     void FillParityBits(std::vector<bool>& hamming_data) {
         for (size_t parity_bit = 1; parity_bit < hamming_data.size(); parity_bit *= 2) {
             for (size_t hamming_bit = parity_bit; hamming_bit < hamming_data.size(); hamming_bit += parity_bit * 2) {
-                for (size_t data_bit = hamming_bit; (data_bit < hamming_bit + parity_bit) && data_bit < hamming_data.size(); ++data_bit) {
+                for (size_t data_bit = hamming_bit; (data_bit < hamming_bit + parity_bit) && (data_bit < hamming_data.size()); ++data_bit) {
                     hamming_data[parity_bit] = hamming_data[parity_bit] ^ hamming_data[data_bit];
                 }
             }
@@ -52,7 +52,7 @@ namespace HammingCode {
         for (size_t parity_bit = 1; parity_bit < hamming_data.size(); parity_bit *= 2) {
             uint8_t check_parity_bit = 0;
             for (size_t hamming_bit = parity_bit; hamming_bit < hamming_data.size(); hamming_bit += parity_bit * 2) {
-                for (size_t check_bit = hamming_bit; (check_bit < hamming_bit + parity_bit) && check_bit < hamming_data.size(); ++check_bit) {
+                for (size_t check_bit = hamming_bit; (check_bit < hamming_bit + parity_bit) && (check_bit < hamming_data.size()); ++check_bit) {
                     check_parity_bit ^= hamming_data[check_bit];
                 }
             }

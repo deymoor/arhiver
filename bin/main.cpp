@@ -35,34 +35,35 @@ int main(int argc, char** argv) {
         std::cout << parser.HelpDescription() << std::endl;
         return 0;
     }
-    // переделать positional, добавить -l file1 без равно
+    // переделать positional, добавить -l myfile1 без равно
     HammingArchive::HamArc archive(*parser.GetStringValue("file"));
-    archive.OpenArchive();
-    archive.DecodeArchive();
-//    if (options.create) {
-//        archive.CreateArchive();
-//        for (size_t i = 0; i < files.size(); ++i) {
-//            archive.EncodeFile(files[i]);
-//        }
-//    } else if (options.list) {
-//        archive.OpenArchive();
-//        archive.PrintFilesName();
-//    } else if (options.extract) {
-//        if (files.empty()) {
-//            archive.ExtractAllFiles();
-//        } else {
-//            for (size_t i = 0; i < files.size(); ++i) {
-//                archive.ExtractFile(files[i]);
-//            }
-//        }
-//    } else if (options.concatenate) {
-//        if (files.size() != 2) {
-//            // error
-//        }
-//        archive.Merge(files[0], files[1]);
-//    } else {
-//        std::cout << "print command!";
-//        // error: print command
-//    }
+    if (options.create) {
+        archive.CreateArchive();
+        for (size_t i = 0; i < files.size(); ++i) {
+            archive.EncodeFile(files[i]);
+        }
+        archive.OpenArchive();
+        archive.DecodeArchive();
+    } else if (options.list) {
+        archive.OpenArchive();
+        archive.PrintFilesName();
+    } else if (options.extract) {
+        if (files.empty()) {
+            archive.ExtractAllFiles();
+        } else {
+            for (size_t i = 0; i < files.size(); ++i) {
+                archive.ExtractFile(files[i]);
+            }
+        }
+    } else if (options.concatenate) {
+        if (files.size() != 2) {
+            // error
+        }
+        archive.Merge(files[0], files[1]);
+    } else {
+        std::cout << "print command!";
+        // error: print command
+    }
     return 0;
 }
+// size - 5 байт, остальное по 8 байт + остаток
