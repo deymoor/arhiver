@@ -14,7 +14,6 @@ namespace HammingArchive {
         void CreateArchive();
         void OpenArchive();
         void EncodeFile(std::string_view file_name);
-        void DecodeArchive();
         void AppendFile(std::string_view file_name);
         void DeleteFile(std::string_view file_name);
         void PrintFilesName();
@@ -22,6 +21,7 @@ namespace HammingArchive {
         void ExtractFile(std::string_view file_name);
         void Merge(std::string_view first_archive_name, std::string_view second_archive_name);
     private:
+        void WriteVectorToFile(std::ofstream& file, const std::vector<bool>& data);
         std::string VectorToString(std::vector<bool>& data);
         void GetFile(std::ofstream& file, uint32_t bytes, uint32_t file_size);
         std::string GetFileName(uint32_t bytes, uint32_t file_name_size);

@@ -42,8 +42,6 @@ int main(int argc, char** argv) {
         for (size_t i = 0; i < files.size(); ++i) {
             archive.EncodeFile(files[i]);
         }
-        archive.OpenArchive();
-        archive.DecodeArchive();
     } else if (options.list) {
         archive.OpenArchive();
         archive.PrintFilesName();
