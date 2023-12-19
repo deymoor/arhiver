@@ -1,10 +1,9 @@
 #include <libs/ArgParser/ArgParser.h>
 #include <libs/HamArc/HamArc.h>
-#include <libs/HamArc/HammingCode/Hamming.h>
+#include <libs/HamArc/utils.h>
 #include <iostream>
 #include <vector>
 #include <string>
-#include <optional>
 
 struct Options {
     bool create = false;
@@ -17,7 +16,7 @@ int main(int argc, char** argv) {
     Options options;
     std::vector<std::string> files;
     ArgumentParser::ArgParser parser("HamArc's Arguments");
-    parser.AddStringArgument("files", "files to archives").MultiValue().Positional().StoreValues(files);
+    parser.AddStringArgument("files", "files to archives").MultiValue().Positional().AdditionalArgument().StoreValues(files);
     parser.AddFlag('c', "create", "create archive").StoreValue(options.create);
     parser.AddStringArgument('f', "file", "set archive name or choose archive");
     parser.AddFlag('l', "list", "print file's name in archive").StoreValue(options.list);
@@ -46,6 +45,7 @@ int main(int argc, char** argv) {
         archive.OpenArchive();
         archive.PrintFilesName();
     } else if (options.extract) {
+        archive.OpenArchive();
         if (files.empty()) {
             archive.ExtractAllFiles();
         } else {
@@ -55,13 +55,18 @@ int main(int argc, char** argv) {
         }
     } else if (options.concatenate) {
         if (files.size() != 2) {
-            // error
+            PrintErrorAndExit("You must to write only two archives!");
         }
+        archive.CreateArchive();
         archive.Merge(files[0], files[1]);
+    } else if (parser.GetStringValue("append")) {
+        HammingArchive::HamArc append_archive(*parser.GetStringValue("append"));
+        append_archive.CreateArchive();
+        append_archive.EncodeFile(*parser.GetStringValue("append"));
+        archive.Merge(*parser.GetStringValue("file"), *parser.GetStringValue("append"));
+    } else if (parser.GetStringValue("delete")) {
+        archive.DeleteFile(*parser.GetStringValue("delete"));
     } else {
-        std::cout << "print command!";
-        // error: print command
+        PrintErrorAndExit("Something went wrong...");
     }
-    return 0;
 }
-// size - 5 байт, остальное по 8 байт + остаток

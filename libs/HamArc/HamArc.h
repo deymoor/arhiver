@@ -5,6 +5,7 @@
 #include <sstream>
 #include <filesystem>
 #include "HammingCode/Hamming.h"
+#include "utils.h"
 
 namespace HammingArchive {
     class HamArc {
@@ -31,6 +32,7 @@ namespace HammingArchive {
         void WriteByteToVector(std::vector<bool>& data, uint8_t byte);
         void WriteVectorToArchive(const std::vector<bool>& data);
         void WriteFileNameToArchive(std::string_view file_name);
+        uint32_t FromBitsToBytes(uint32_t bits);
 
         template <typename T>
         std::vector<bool> NumToVector(T num) {

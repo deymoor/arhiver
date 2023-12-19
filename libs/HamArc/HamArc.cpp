@@ -125,7 +125,7 @@ namespace HammingArchive {
             if (cnt == 9) {
                 std::optional<std::vector<bool>> data = HammingCode::DecodeToData(hamming_code);
                 if (data == std::nullopt) {
-                    std::cout << "Double error!";
+                    PrintErrorAndExit("Double error in hamming code!");
                 }
                 file_name += VectorToString(*data);
                 hamming_code.clear();
@@ -140,7 +140,7 @@ namespace HammingArchive {
             }
             std::optional<std::vector<bool>> data = HammingCode::DecodeToData(hamming_code);
             if (data == std::nullopt) {
-                std::cout << "Double error!";
+                PrintErrorAndExit("Double error in hamming code!");
             }
             file_name += VectorToString(*data);
         }
@@ -158,6 +158,10 @@ namespace HammingArchive {
         }
     }
 
+    uint32_t HamArc::FromBitsToBytes(uint32_t bits) {
+        return bits / kBitsInByte + std::min(static_cast<uint32_t>(1), bits % kBitsInByte);
+    }
+
     void HamArc::GetFile(std::ofstream &file, uint32_t bytes, uint32_t file_size) {
         std::vector<bool> hamming_code;
         uint8_t cnt = 0;
@@ -169,7 +173,7 @@ namespace HammingArchive {
             if (cnt == 9) {
                 std::optional<std::vector<bool>> data = HammingCode::DecodeToData(hamming_code);
                 if (data == std::nullopt) {
-                    std::cout << "Double error!";
+                    PrintErrorAndExit("Double error in hamming code!");
                 }
                 WriteVectorToFile(file, *data);
                 hamming_code.clear();
@@ -178,7 +182,7 @@ namespace HammingArchive {
             --bytes;
         }
         if (cnt != 0) {
-            uint32_t remain = 8 - (file_size % 8);
+            uint32_t remain = kBitsInByte - (file_size % kBitsInByte);
             for (size_t i = 0; i < remain; ++i) {
                 hamming_code.pop_back();
             }
@@ -192,28 +196,68 @@ namespace HammingArchive {
 
     void HamArc::ExtractAllFiles() {
         uint32_t file_name_size;
+        uint32_t file_size;
         while (GetSize(file_name_size)) {
-            uint32_t bytes_count_to_read = file_name_size / 8 + std::min(static_cast<uint32_t>(1), file_name_size % 8);
-            std::string file_name = GetFileName(bytes_count_to_read, file_name_size);
-            uint32_t file_size;
+            uint32_t file_name_size_in_bytes = FromBitsToBytes(file_name_size);
+            std::string file_name = GetFileName(file_name_size_in_bytes, file_name_size);
             GetSize(file_size);
-            uint32_t bytes_count_to_read_file = file_size / 8 + std::min(static_cast<uint32_t>(1), file_size % 8);
+            uint32_t file_size_in_bytes = FromBitsToBytes(file_size);
             // убрать локальную директорию
             std::ofstream file("/home/dmitry/labs/" + file_name);
-            GetFile(file, bytes_count_to_read_file, file_size);
+            GetFile(file, file_size_in_bytes, file_size);
         }
-
     }
 
-    void HamArc::ExtractFile(std::string_view file_name) {
-
+    void HamArc::ExtractFile(std::string_view file_name_required) {
+        uint32_t file_name_size;
+        uint32_t file_size;
+        while (GetSize(file_name_size)) {
+            uint32_t file_name_size_in_bytes = FromBitsToBytes(file_name_size);
+            std::string file_name = GetFileName(file_name_size_in_bytes, file_name_size);
+            GetSize(file_size);
+            uint32_t file_size_in_bytes = FromBitsToBytes(file_size);
+            if (file_name == file_name_required) {
+                // убрать локальную директорию
+                std::ofstream file("/home/dmitry/labs/" + file_name);
+                GetFile(file, file_size_in_bytes, file_size);
+                break;
+            }
+            archive_in_.seekg(file_size_in_bytes, std::ios_base::cur);
+        }
     }
 
     void HamArc::PrintFilesName() {
-
+        uint32_t file_name_size;
+        uint32_t file_size;
+        std::cout << "Files in " << name_ << kHammingArchiveExtension << " archive:\n";
+        while (GetSize(file_name_size)) {
+            uint32_t file_name_size_in_bytes = FromBitsToBytes(file_name_size);
+            std::string file_name = GetFileName(file_name_size_in_bytes, file_name_size);
+            GetSize(file_size);
+            uint32_t file_size_in_bytes = FromBitsToBytes(file_size);
+            archive_in_.seekg(file_size_in_bytes, std::ios_base::cur);
+            std::cout << file_name << '\n';
+        }
+        std::cout << '\b';
     }
 
     void HamArc::Merge(std::string_view first_archive_name, std::string_view second_archive_name) {
+        uint8_t byte;
+        std::ifstream first_archive(first_archive_name.data());
+        std::ifstream second_archive(second_archive_name.data());
+        while (first_archive >> std::noskipws >> byte) {
+            archive_out_ << byte;
+        }
+        while(second_archive >> std::noskipws >> byte) {
+            archive_out_ << byte;
+        }
+    }
+
+    void HamArc::AppendFile(std::string_view file_name) {
+        EncodeFile(file_name);
+    }
+
+    void HamArc::DeleteFile(std::string_view file_name) {
 
     }
 

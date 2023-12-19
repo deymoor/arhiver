@@ -192,7 +192,6 @@ std::optional<std::string> ArgumentParser::ArgParser::GetStringValue(std::string
         }
         return str_arguments_[i].GetParameter(pos);
     }
-    ThrowError("GetStringValue: Argument didn't found!");
     return std::nullopt;
 }
 
@@ -220,7 +219,6 @@ std::optional<std::string> ArgumentParser::ArgParser::GetStringValue(char short_
         }
         return str_arguments_[i].GetParameter(pos);
     }
-    ThrowError("GetStringValue: Argument didn't found!");
     return std::nullopt;
 }
 
@@ -248,7 +246,6 @@ std::optional<int32_t> ArgumentParser::ArgParser::GetIntValue(std::string_view l
         }
         return int_arguments_[i].GetParameter(pos);
     }
-    ThrowError("GetIntValue: Argument didn't found!");
     return std::nullopt;
 }
 
@@ -276,7 +273,6 @@ std::optional<int32_t> ArgumentParser::ArgParser::GetIntValue(char short_name, i
         }
         return int_arguments_[i].GetParameter(pos);
     }
-    ThrowError("GetIntValue: Argument didn't found!");
     return std::nullopt;
 }
 
@@ -304,7 +300,6 @@ std::optional<bool> ArgumentParser::ArgParser::GetFlag(std::string_view long_nam
         }
         return bool_arguments_[i].GetParameter(pos);
     }
-    ThrowError("GetFlag: Argument didn't found!");
     return std::nullopt;
 }
 
@@ -332,7 +327,6 @@ std::optional<bool> ArgumentParser::ArgParser::GetFlag(char short_name, int32_t 
         }
         return bool_arguments_[i].GetParameter(pos);
     }
-    ThrowError("GetFlag: Argument didn't found!");
     return std::nullopt;
 }
 
