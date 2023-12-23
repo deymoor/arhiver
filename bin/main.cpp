@@ -24,6 +24,8 @@ int main(int argc, char** argv) {
     parser.AddStringArgument('a', "append", "append file to archive").AdditionalArgument();
     parser.AddStringArgument('d', "delete", "delete file from archive").AdditionalArgument();
     parser.AddFlag('c', "concatenate", "concatenate two archives").StoreValue(options.concatenate);
+    parser.AddIntArgument("encode", "argument for encode(bytes)").AdditionalArgument();
+    parser.AddIntArgument("decode", "argument for decode(bytes)").AdditionalArgument();
     parser.AddHelp('h', "help", "Program archive files");
     if (!parser.Parse(argc, argv)) {
         std::cout << "Wrong arguments!" << std::endl;
@@ -34,8 +36,9 @@ int main(int argc, char** argv) {
         std::cout << parser.HelpDescription() << std::endl;
         return 0;
     }
-    // переделать positional, добавить -l myfile1 без равно
-    HammingArchive::HamArc archive(*parser.GetStringValue("file"));
+    HammingArchive::HamArc archive(*parser.GetStringValue("file"),
+                                   parser.GetIntValue("encode"),
+                                   parser.GetIntValue("decode"));
     if (options.create) {
         archive.CreateArchive();
         for (size_t i = 0; i < files.size(); ++i) {
@@ -43,7 +46,7 @@ int main(int argc, char** argv) {
         }
     } else if (options.list) {
         archive.OpenArchive();
-        archive.PrintFilesName();
+        archive.PrintFileNames();
     } else if (options.extract) {
         archive.OpenArchive();
         if (files.empty()) {
@@ -60,10 +63,8 @@ int main(int argc, char** argv) {
         archive.CreateArchive();
         archive.Merge(files[0], files[1]);
     } else if (parser.GetStringValue("append")) {
-        HammingArchive::HamArc append_archive(*parser.GetStringValue("append"));
-        append_archive.CreateArchive();
-        append_archive.EncodeFile(*parser.GetStringValue("append"));
-        archive.Merge(*parser.GetStringValue("file"), *parser.GetStringValue("append"));
+        archive.OpenArchiveToAppend();
+        archive.AppendFile(*parser.GetStringValue("append"));
     } else if (parser.GetStringValue("delete")) {
         archive.DeleteFile(*parser.GetStringValue("delete"));
     } else {
