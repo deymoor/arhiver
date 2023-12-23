@@ -2,15 +2,7 @@
 
 namespace HammingArchive {
 
-    HamArc::HamArc(const std::string &file_name, std::optional<int32_t> encode_argument,
-                   std::optional<int32_t> decode_argument): name_(file_name) {
-        if (encode_argument) {
-            encode_argument_ = *encode_argument;
-        }
-        if (decode_argument) {
-            decode_argument_ = *decode_argument;
-        }
-    }
+    HamArc::HamArc(const std::string &file_name): name_(file_name) {}
 
     void HamArc::CreateArchive() {
         archive_out_.open(name_ + kHammingArchiveExtension, std::ios_base::out);
@@ -47,8 +39,7 @@ namespace HammingArchive {
     void HamArc::DeleteFile(std::string_view file_name) {
         this->OpenArchive();
         std::string temp_name = std::to_string(std::time(nullptr));
-        HammingArchive::HamArc temp_archive(temp_name, encode_argument_,
-                                            decode_argument_);
+        HammingArchive::HamArc temp_archive(temp_name);
         temp_archive.CreateArchive();
         HeaderHAF header;
         while (GetHeader(header)) {
@@ -56,7 +47,7 @@ namespace HammingArchive {
                 archive_in_.seekg(FromBitsToBytes(header.data_size), std::ios_base::cur);
             } else {
                 archive_in_.seekg(-static_cast<int32_t>(FromBitsToBytes(header.name_size))
-                    - 2 * kBytesInHammingCodeUINT32_T, std::ios_base::cur);
+                                  - 2 * kBytesInHammingCodeUINT32_T, std::ios_base::cur);
                 this->MoveData(temp_archive, header);
             }
         }
@@ -75,16 +66,17 @@ namespace HammingArchive {
     void HamArc::ExtractAllFiles() {
         HeaderHAF header;
         while (GetHeader(header)) {
-            std::ofstream file("/home/dmitry/labs/" + header.name);
+            std::ofstream file(header.name);
             GetFile(file, header.data_size);
         }
     }
 
     void HamArc::ExtractFile(std::string_view file_name) {
+        archive_in_.seekg(0, std::ios_base::beg);
         HeaderHAF header;
         while (GetHeader(header)) {
             if (header.name == file_name) {
-                std::ofstream file("/home/dmitry/labs/" + header.name);
+                std::ofstream file(header.name);
                 GetFile(file, header.data_size);
                 break;
             }
@@ -253,7 +245,7 @@ namespace HammingArchive {
     void HamArc::MoveData(HammingArchive::HamArc &archive, HammingArchive::HamArc::HeaderHAF &header) {
         uint8_t byte;
         uint32_t file_size = 2 * kBytesInHammingCodeUINT32_T +
-                FromBitsToBytes(header.name_size) + FromBitsToBytes(header.data_size);
+                             FromBitsToBytes(header.name_size) + FromBitsToBytes(header.data_size);
         for (size_t i = 0; i < file_size; ++i) {
             archive_in_ >> std::noskipws >> byte;
             archive.Move(byte);

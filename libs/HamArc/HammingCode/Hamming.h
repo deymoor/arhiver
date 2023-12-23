@@ -4,6 +4,7 @@
 #include <iostream>
 #include <optional>
 
+uint32_t HammingSize(uint8_t data_size);
 
 std::vector<bool> EncodeToHammingCode(const std::vector<bool>& data);
 

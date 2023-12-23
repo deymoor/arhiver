@@ -1,13 +1,17 @@
 #include "Hamming.h"
 
 
-void Init(uint8_t data_size, std::vector<bool>& hamming_data) {
+uint32_t HammingSize(uint8_t data_size) {
     uint8_t redundant_bits = 0;
     while ((1 << redundant_bits) < data_size + redundant_bits + 1) {
         ++redundant_bits;
     }
     ++redundant_bits;
-    hamming_data.resize(data_size + redundant_bits);
+    return redundant_bits + data_size;
+}
+
+void Init(uint8_t data_size, std::vector<bool>& hamming_data) {
+    hamming_data.resize(HammingSize(data_size));
 }
 
 void FillParityBits(std::vector<bool>& hamming_data) {

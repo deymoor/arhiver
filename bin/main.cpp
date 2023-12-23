@@ -24,8 +24,6 @@ int main(int argc, char** argv) {
     parser.AddStringArgument('a', "append", "append file to archive").AdditionalArgument();
     parser.AddStringArgument('d', "delete", "delete file from archive").AdditionalArgument();
     parser.AddFlag('c', "concatenate", "concatenate two archives").StoreValue(options.concatenate);
-    parser.AddIntArgument("encode", "argument for encode(bytes)").AdditionalArgument();
-    parser.AddIntArgument("decode", "argument for decode(bytes)").AdditionalArgument();
     parser.AddHelp('h', "help", "Program archive files");
     if (!parser.Parse(argc, argv)) {
         std::cout << "Wrong arguments!" << std::endl;
@@ -36,9 +34,7 @@ int main(int argc, char** argv) {
         std::cout << parser.HelpDescription() << std::endl;
         return 0;
     }
-    HammingArchive::HamArc archive(*parser.GetStringValue("file"),
-                                   parser.GetIntValue("encode"),
-                                   parser.GetIntValue("decode"));
+    HammingArchive::HamArc archive(*parser.GetStringValue("file"));
     if (options.create) {
         archive.CreateArchive();
         for (size_t i = 0; i < files.size(); ++i) {

@@ -11,8 +11,7 @@
 namespace HammingArchive {
     class HamArc {
     public:
-        HamArc(const std::string& file_name, std::optional<int32_t> encode_argument,
-               std::optional<int32_t> decode_argument);
+        HamArc(const std::string& file_name);
 
         void CreateArchive();
         void OpenArchiveToAppend();
